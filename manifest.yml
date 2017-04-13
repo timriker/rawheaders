@@ -1,0 +1,16 @@
+instances: 2
+memory: 128M
+disk_quota: 256M
+services:
+- splunk-service
+- wam-basic
+
+applications:
+
+- name: sso-dev
+  host: sso
+  domain: app-dev.lds.org
+
+- name: sso-test
+  host: sso
+  domain: app-test.lds.org
