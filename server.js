@@ -52,6 +52,7 @@ app.get('/', function (req, res) {
     reply.otherheaders = {};
     for (key in req.headers) {
         if (/policy/.test(key)) {
+            res.setHeader(key, req.headers[key]);
             reply.headers[key] = req.headers[key];
         } else {
             reply.otherheaders[key] = req.headers[key];
