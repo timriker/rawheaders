@@ -7,10 +7,10 @@ services:
 
 applications:
 
-- name: sso-dev
-  host: sso
+- name: header-dev
+  host: header
   domain: app-dev.lds.org
 
-- name: sso-test
-  host: sso
+- name: header-test
+  host: header
   domain: app-test.lds.org

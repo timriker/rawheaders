@@ -1,3 +1,12 @@
+// node.js back end app to present SSO headers
+// used by sso-facade, .NET sso emulator, and others
+// by Tim Riker <Tim@LDSChurch.org>
+
+// bare request gets headers in json and as headers
+// calling with ?in=<url> does SSO signin and then redirects to url
+// calling with ?out=<url> does SSO signout and then redirects to url
+// cookiename is the cookie passed to the client to remember where to redirect to
+
 var express = require('express');
 var cookie = require('cookie');
 var stringify = require('json-stable-stringify');
@@ -74,5 +83,5 @@ var server = app.listen(port, function () {
     var host = server.address().address
     var port = server.address().port
 
-    console.log("Example app listening at http://%s:%s", host, port)
+    console.log("Listening at http://%s:%s", host, port)
 })
