@@ -1,16 +1,49 @@
-instances: 2
-memory: 128M
-disk_quota: 256M
-services:
-- splunk-service
-- wam-basic
+defaults: &defaults
+  instances: 1
+  memory: 64M
+  disk_quota: 256M
+  services:
+  - splunk-service
 
 applications:
 
 - name: header-dev
-  host: header
-  domain: app-dev.lds.org
+  <<: *defaults
+  routes:
+  - route: header.app-dev.lds.org
+  - route: header-dev.churchofjesuschrist.org
+  - route: header-dev.lds.org
+  - route: header-dev.ldschurch.org
 
 - name: header-test
-  host: header
-  domain: app-test.lds.org
+  <<: *defaults
+  routes:
+  - route: header.app-test.lds.org
+  - route: header-test.churchofjesuschrist.org
+  - route: header-test.lds.org
+  - route: header-test.ldschurch.org
+
+- name: header-int
+  <<: *defaults
+  instances: 2
+  routes:
+  - route: header.app-int.lds.org
+  - route: header-int.churchofjesuschrist.org
+  - route: header-int.lds.org
+  - route: header-int.ldschurch.org
+
+- name: header-stage
+  <<: *defaults
+  routes:
+  - route: header.app-stage.lds.org
+  - route: header-stage.churchofjesuschrist.org
+  - route: header-stage.lds.org
+  - route: header-stage.ldschurch.org
+
+- name: header-uat
+  <<: *defaults
+  routes:
+  - route: header.app-uat.lds.org
+  - route: header-uat.churchofjesuschrist.org
+  - route: header-uat.lds.org
+  - route: header-uat.ldschurch.org
