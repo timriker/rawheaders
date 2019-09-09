@@ -1,6 +1,6 @@
 // node.js back end app to present SSO headers
-// used by sso-facade, .NET sso emulator, and others
-// by Tim Riker <Tim@LDSChurch.org>
+// used by stack-facade, .NET sso emulator, and others
+// by Tim Riker <Tim@Rikers.org>
 
 // bare request gets headers in json and as headers
 // calling with ?in=<url> does SSO signin and then redirects to url
@@ -18,8 +18,9 @@ var app = express();
 // Middleware
 app.disable('x-powered-by');
 app.set('trust proxy', true)
+app.set('json spaces', 4);
 app.use(function(req, res, next) {
-    if (req.get('host').indexOf('localhost') == -1) {
+    if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
         // F5 keeps losing the X-Forwarded-Proto setting
         req.headers['x-forwarded-proto'] = 'https';
     }
@@ -28,7 +29,22 @@ app.use(function(req, res, next) {
     next();
 });
 
+app.head('/', function (req, res) {
+    for (key in req.headers) {
+        if (/policy/.test(key)) {
+            res.setHeader(key, req.headers[key]);
+        }
+    };
+    res.end();
+});
+
 app.get('/', function (req, res) {
+    // return html page when requested
+    if (req.query.format === undefined || req.query.format !== 'json') {
+        res.sendFile(`${__dirname}/request.html`);
+        return;
+    }
+
     var signin = req.root + '?' + (req.headers["policy-signin"] || "signmein");
     var signout = req.root + '?' + (req.headers["policy-signout"] || "signmeout");
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
@@ -51,37 +67,43 @@ app.get('/', function (req, res) {
     if (cookies[cookiename]) {
         res.clearCookie(cookiename, { path: '/' });
         res.redirect(cookies[cookiename]);
-    }
+    };
 
     var reply = {};
     //reply.query = req.query;
     //reply.env = process.env;
-    reply.cookies = cookies;
+    reply.links = {
+        "html": req.root + '?format=html',
+        "json": req.root + '?format=json',
+        "in": req.root + '?in=' + encodeURIComponent(req.root),
+        "out": req.root + '?out=' + encodeURIComponent(req.root),
+        "self": req.root,
+        "signin": signin,
+        "signout": signout
+    };
     reply.headers = {};
     reply.otherheaders = {};
     for (key in req.headers) {
         if (/policy/.test(key)) {
-            res.setHeader(key, req.headers[key]);
             reply.headers[key] = req.headers[key];
         } else {
             reply.otherheaders[key] = req.headers[key];
         }
-    }
-    reply.links = {
-        "self": req.root,
-        "signin": signin,
-        "signout": signout,
-        "in": req.root + '?in=' + encodeURIComponent(req.root),
-        "out": req.root + '?out=' + encodeURIComponent(req.root)
     };
+    reply.info = {
+        "date": (new Date()).toISOString(),
+        "httpVersion": req.httpVersion,
+        "ip": req.ip
+    };
+    reply.cookies = cookies;
     //console.log(reply);
-    res.setHeader('Content-Type', 'application/json; charset=UTF-8');
-    res.end(stringify(reply));
+    //res.setHeader('Content-Type', 'application/json; charset=UTF-8');
+    res.json(reply);
 })
 
 var server = app.listen(port, function () {
-    var host = server.address().address
-    var port = server.address().port
+    var host = server.address().address;
+    var port = server.address().port;
 
-    console.log("Listening at http://%s:%s", host, port)
+    console.log("Listening at http://%s:%s", host, port);
 })
