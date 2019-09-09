@@ -47,3 +47,9 @@ applications:
   - route: header-uat.churchofjesuschrist.org
   - route: header-uat.lds.org
   - route: header-uat.ldschurch.org
+
+- name: rawheader
+  <<: *defaults
+  instances: 2
+  routes:
+  - route: rawheader.churchofjesuschrist.org
