@@ -15,7 +15,7 @@
 			}
 			.dataTables_wrapper {
 				width: 94%;
-    			padding-left: 3%;
+				padding-left: 3%;
 			}
 			th {
 				text-align: left;
@@ -34,7 +34,7 @@
 				color: inherit;				
 			}
 			a:link, a:visited, ins {
-    			text-decoration: none;
+				text-decoration: none;
 			}
 			a:hover, a:active {
 				text-decoration: underline;
@@ -47,7 +47,7 @@
 				text-align: center;
 			}
 			#PFprefBox {
- 			   position: absolute;
+ 				position: absolute;
 				right: 3%;
 				justify-content: center;
 				height: 80px;
@@ -59,18 +59,18 @@
 				font-family: Open Sans,Zoram,noto sans,Helvetica,Arial,system-ui,-apple-system!important;
 				color:rgb(33, 34, 37);
 				list-style: none;
-				padding-inline-start: 0;
+				padding-left: 0px;
 			}
 			#prefBoxLinks li {
 				margin: 8px;
 			}
 			.dataTables_wrapper .dataTables_filter {
-			    float: left;
+				float: left;
 				text-align: right;
-    			padding-right: 4px;
+	 			padding-right: 4px;
 			}
 			.dataTables_wrapper .dataTables_info {
-			    padding-top: 0px;
+				padding-top: 0px;
 				padding-right: 4px;
 			}
 			.buttons-columnVisibility {
@@ -83,44 +83,44 @@
 		<script class="init">
 			function escapeHTML(unsafe) {
 				return unsafe
-         			.replace(/&/g, "&amp;")
-         			.replace(/</g, "&lt;")
-         			.replace(/>/g, "&gt;")
-         			.replace(/"/g, "&quot;")
-         			.replace(/'/g, "&#039;");
- 			}
+					.replace(/&/g, "&amp;")
+					.replace(/</g, "&lt;")
+					.replace(/>/g, "&gt;")
+					.replace(/"/g, "&quot;")
+					.replace(/'/g, "&#039;");
+			}
 			$(document).ready(function() {
 				$.getJSON("?format=json", function (result) {
 					siteData = result;
 					siteData.data = Object.keys(siteData.links).map(function(data){
-    					return {"type":"link","name":data,"value":'<a href="'+escapeHTML(siteData.links[data])+'">'+escapeHTML(siteData.links[data])+'</a>'};
-    				});
+						return {"type":"link","name":data,"value":'<a href="'+escapeHTML(siteData.links[data])+'">'+escapeHTML(siteData.links[data])+'</a>'};
+					});
 					siteData.headerArray = Object.keys(siteData.headers).map(function(data){
-    					return {"type":"header","name":data,"value":escapeHTML(siteData.headers[data])};
-    				});
+						return {"type":"header","name":data,"value":escapeHTML(siteData.headers[data])};
+					});
 					siteData.otherheaderArray = Object.keys(siteData.otherheaders).map(function(data){
-    					return {"type":"header","name":data,"value":escapeHTML(siteData.otherheaders[data])};
-    				});
+						return {"type":"header","name":data,"value":escapeHTML(siteData.otherheaders[data])};
+					});
 					siteData.cookieArray = Object.keys(siteData.cookies).map(function(data){
-    					return {"type":"cookie","name":data,"value":escapeHTML(siteData.cookies[data])};
+						return {"type":"cookie","name":data,"value":escapeHTML(siteData.cookies[data])};
 					});
 					siteData.infoArray = Object.keys(siteData.info).map(function(data){
-    					return {"type":"info","name":data,"value":escapeHTML(siteData.info[data])};
+						return {"type":"info","name":data,"value":escapeHTML(siteData.info[data])};
 					});
 					Array.prototype.push.apply(siteData.data,siteData.headerArray);
 					Array.prototype.push.apply(siteData.data,siteData.otherheaderArray);
 					Array.prototype.push.apply(siteData.data,siteData.cookieArray);
 					Array.prototype.push.apply(siteData.data,siteData.infoArray);
 					// Setup - add a text input to each footer cell
-    				$('#data tfoot th').each( function () {
-        				var title = $(this).text();
-        				$(this).html( '<input type="text" style="width: 100%" placeholder="Search '+title+'" />' );
-    				} );
+					$('#data tfoot th').each( function () {
+						var title = $(this).text();
+						$(this).html( '<input type="text" style="width: 100%" placeholder="Search '+title+'" />' );
+					} );
 					siteData.table = $('#data').DataTable({
 						"autoWidth": false,
 						"buttons": [
 							{
-					            "text": 'Reset',
+								"text": 'Reset',
 								"action": function ( e, dt, node, config ) {
 									dt.search('').columns().search('').draw();
 								}
@@ -129,26 +129,26 @@
 								"extend": "columnsToggle",
 							},
 							{
-                				"extend": 'copy'
+								"extend": 'copy'
 							},
 							{
-                				"extend": 'print'
+								"extend": 'print'
 							},
 							{
 								"extend": 'csv',
 								"title": 'requestdata'
 							},
 							{
-					            "text": 'Reload',
+								"text": 'Reload',
 								"action": function ( e, dt, node, config ) {
 									location.reload();
 								}
 							}
-        				],
+						],
 						"columns": [
 							{ "data": "type", "width":"5%" },
-            				{ "data": "name", "width":"20%" },
-            				{ "data": "value", "width":"75%" }
+							{ "data": "name", "width":"20%" },
+							{ "data": "value", "width":"75%" }
 						],
 						"data": siteData.data,
 						"dom": 'fBrtilp',
@@ -156,14 +156,14 @@
 						"stateSave" : true,
 					});
 					siteData.table.columns().every( function () {
-        				var that = this;
- 
-        				$( 'input', this.footer() ).on( 'keyup change clear', function () {
-            				if ( that.search() !== this.value ) {
-                				that
-                    				.search( this.value )
-                    				.draw();
-            				}
+						var that = this;
+
+						$( 'input', this.footer() ).on( 'keyup change clear', function () {
+							if ( that.search() !== this.value ) {
+								that
+									.search( this.value )
+									.draw();
+							}
 						});
 					});
 				});
