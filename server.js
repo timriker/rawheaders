@@ -84,8 +84,12 @@ app.get('/', function (req, res) {
     reply.headers = {};
     reply.otherheaders = {};
     for (key in req.headers) {
-        if (/policy/.test(key)) {
-            reply.headers[key] = req.headers[key];
+        if (/^policy/.test(key)) {
+            if (/(localhost|-(dev|test|stage|int|uat|load)\.)/.test(req.hostname) || !(/^policy-(ldsmrn|ldsbdate|workforceid)/.test(key))) {
+                reply.headers[key] = req.headers[key];
+            } else {
+                reply.headers[key] = '*****';
+            }
         } else {
             reply.otherheaders[key] = req.headers[key];
         }
