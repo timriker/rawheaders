@@ -85,7 +85,7 @@ app.get('/', function (req, res) {
     reply.otherheaders = {};
     for (key in req.headers) {
         if (/^policy/.test(key)) {
-            if (/(localhost|-(dev|test|stage|int|uat|load)\.)/.test(req.hostname) || !(/^policy-(ldsmrn|ldsbdate|workforceid)/.test(key))) {
+            if (/(localhost|-(dev|test|stage|int|uat|load)\.)/i.test(req.hostname) || !(/^policy-(ldsmrn|ldsbdate|workforceid)/i.test(key))) {
                 reply.headers[key] = req.headers[key];
             } else {
                 reply.headers[key] = '*****';
@@ -97,6 +97,7 @@ app.get('/', function (req, res) {
     reply.info = {
         "date": (new Date()).toISOString(),
         "httpVersion": req.httpVersion,
+        "hostname": req.hostname,
         "ip": req.ip
     };
     reply.cookies = cookies;
