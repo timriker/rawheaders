@@ -96,7 +96,7 @@ app.get('/', function (req, res) {
     };
     reply.info = {
         "date": (new Date()).toISOString(),
-        "httpVersion": req.httpVersion,
+        "httpversion": req.httpVersion,
         "hostname": req.hostname,
         "ip": req.ip
     };
