@@ -25,7 +25,7 @@ app.use(function(req, res, next) {
         req.headers['x-forwarded-proto'] = 'https';
     }
     //console.log(req.headers);
-    req.root = req.protocol + '://' + req.get('host');
+    req.root = req.protocol + '://' + req.hostname;
     next();
 });
 
@@ -97,8 +97,12 @@ app.get('/', function (req, res) {
     reply.info = {
         "date": (new Date()).toISOString(),
         "httpversion": req.httpVersion,
+        "host": req.host,
         "hostname": req.hostname,
-        "ip": req.ip
+        "ip": req.ip,
+        "originalurl": req.originalUrl,
+        "root": req.root,
+        "url": req.url
     };
     reply.cookies = cookies;
     //console.log(reply);
