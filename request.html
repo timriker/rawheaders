@@ -94,8 +94,10 @@
 			$(document).ready(function() {
 				$.getJSON("?format=json", function (result) {
 					siteData = result;
-					siteData.data = Object.keys(siteData.links).map(function(data){
-						return {"type":"link","name":data,"value":'<a href="'+escapeHTML(siteData.links[data])+'">'+escapeHTML(siteData.links[data])+'</a>'};
+					var re = new RegExp(siteData.links.self, "g");
+					var links = (JSON.parse(JSON.stringify(siteData.links).replace(re, '.')));
+					siteData.data = Object.keys(links).map(function(data){
+						return {"type":"link","name":data,"value":'<a href="'+escapeHTML(links[data])+'">'+escapeHTML(links[data])+'</a>'};
 					});
 					siteData.headerArray = Object.keys(siteData.headers).map(function(data){
 						return {"type":"header","name":data,"value":escapeHTML(siteData.headers[data])};
