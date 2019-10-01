@@ -16,6 +16,7 @@ var port =  process.env.PORT || 8081;
 var app = express();
 
 // Middleware
+app.use(express.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 app.set('trust proxy', true)
 app.set('json spaces', 4);
@@ -43,7 +44,7 @@ app.all('/restricted', function (req, res){
     res.redirect(307, '..');
 });
 
-app.all('/', function (req, res) {
+app.all('/*', function (req, res) {
     // return html page when requested
     if (req.query.format === undefined || req.query.format !== 'json') {
         res.sendFile(`${__dirname}/request.html`);
@@ -106,6 +107,7 @@ app.all('/', function (req, res) {
         "host": req.host,
         "hostname": req.hostname,
         "ip": req.ip,
+        "method": req.method,
         "originalurl": req.originalUrl,
         "root": req.root,
         "url": req.url

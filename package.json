@@ -1,13 +1,14 @@
 {
-  "name": "sso",
-  "version": "1.0.0",
-  "description": "SSO json server for SSO emulation",
+  "name": "header",
+  "version": "1.0.5",
+  "description": "server for dumping headers and handling SSO login/logout",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon --exec npm server.js"
   },
   "keywords": [],
+  "author": "Tim Riker <Tim@Rikers.org> (https://rikers.org)"
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.4",
