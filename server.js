@@ -38,7 +38,12 @@ app.head('/', function (req, res) {
     res.end();
 });
 
-app.get('/', function (req, res) {
+// restrict access to /restricted and WAM can then log you in
+app.all('/restricted', function (req, res){
+    res.redirect(307, '..');
+});
+
+app.all('/', function (req, res) {
     // return html page when requested
     if (req.query.format === undefined || req.query.format !== 'json') {
         res.sendFile(`${__dirname}/request.html`);
@@ -77,6 +82,7 @@ app.get('/', function (req, res) {
         "json": req.root + '?format=json',
         "in": req.root + '?in=' + encodeURIComponent(req.root),
         "out": req.root + '?out=' + encodeURIComponent(req.root),
+        "restricted": 'restricted',
         "self": req.root,
         "signin": signin,
         "signout": signout
