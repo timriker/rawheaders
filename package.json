@@ -8,7 +8,7 @@
     "dev": "nodemon --exec npm server.js"
   },
   "keywords": [],
-  "author": "Tim Riker <Tim@Rikers.org> (https://rikers.org)"
+  "author": "Tim Riker <Tim@Rikers.org> (https://rikers.org)",
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.4",
