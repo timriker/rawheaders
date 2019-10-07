@@ -23,7 +23,7 @@ app.set('json spaces', 4);
 app.use(function(req, res, next) {
     if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
         // F5 keeps losing the X-Forwarded-Proto setting
-        req.headers['x-forwarded-proto'] = 'https';
+        //req.headers['x-forwarded-proto'] = 'https';
     }
     //console.log(req.headers);
     req.root = req.protocol + '://' + req.hostname;
