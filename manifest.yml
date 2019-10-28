@@ -10,7 +10,6 @@ applications:
 - name: header-dev
   <<: *defaults
   routes:
-  - route: header.app-dev.lds.org
   - route: header-dev.churchofjesuschrist.org
   - route: header-dev.lds.org
   - route: header-dev.ldschurch.org
@@ -18,7 +17,6 @@ applications:
 - name: header-test
   <<: *defaults
   routes:
-  - route: header.app-test.lds.org
   - route: header-test.churchofjesuschrist.org
   - route: header-test.lds.org
   - route: header-test.ldschurch.org
@@ -27,7 +25,6 @@ applications:
   <<: *defaults
   instances: 2
   routes:
-  - route: header.app-int.lds.org
   - route: header-int.churchofjesuschrist.org
   - route: header-int.lds.org
   - route: header-int.ldschurch.org
@@ -35,7 +32,6 @@ applications:
 - name: header-stage
   <<: *defaults
   routes:
-  - route: header.app-stage.lds.org
   - route: header-stage.churchofjesuschrist.org
   - route: header-stage.lds.org
   - route: header-stage.ldschurch.org
@@ -43,7 +39,6 @@ applications:
 - name: header-uat
   <<: *defaults
   routes:
-  - route: header.app-uat.lds.org
   - route: header-uat.churchofjesuschrist.org
   - route: header-uat.lds.org
   - route: header-uat.ldschurch.org
