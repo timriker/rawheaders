@@ -12,7 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.13.4",
-    "ejs": "^1.0.0",
+    "ejs": "*",
     "cookie": "*",
     "json-stable-stringify": "*"
   },
