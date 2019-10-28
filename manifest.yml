@@ -13,6 +13,7 @@ applications:
   - route: header-dev.churchofjesuschrist.org
   - route: header-dev.lds.org
   - route: header-dev.ldschurch.org
+  - route: rawheader-dev.churchofjesuschrist.org
 
 - name: header-test
   <<: *defaults
