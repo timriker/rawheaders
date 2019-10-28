@@ -27,7 +27,7 @@ app.use(function(req, res, next) {
         //req.headers['x-forwarded-proto'] = 'https';
     }
     //console.log(req.headers);
-    req.root = req.protocol + '://' + req.hostname + ':' + req.port;
+    req.root = req.protocol + '://' + req.headers.host;
     next();
 });
 
@@ -41,12 +41,8 @@ app.all('/return', function (req, res){
     res.end();
 });
 
-app.get('/render*',function (req, res) {
-    res.render('pages/request.ejs');
-    return;
-})
-
 app.head('/*', function (req, res) {
+    // return policy headers on HEAD requests
     for (key in req.headers) {
         if (/policy/.test(key)) {
             res.setHeader(key, req.headers[key]);
@@ -56,12 +52,6 @@ app.head('/*', function (req, res) {
 });
 
 app.all('/*', function (req, res) {
-    // return html page when requested
-    if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
-        res.sendFile(`${__dirname}/request.html`);
-        return;
-    }
-
     var signin = req.root + '?' + (req.headers["policy-signin"] || "signmein");
     var signout = req.root + '?' + (req.headers["policy-signout"] || "signmeout");
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
@@ -125,8 +115,14 @@ app.all('/*', function (req, res) {
     };
     reply.cookies = cookies;
     //console.log(reply);
-    //res.setHeader('Content-Type', 'application/json; charset=UTF-8');
-    res.json(reply);
+    if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
+        // return html page when requested
+        res.render('pages/request.ejs', { "reply": reply });
+        return;
+    } else {
+        // otherwise return json
+        res.json(reply);        
+    }
 })
 
 var server = app.listen(port, function () {

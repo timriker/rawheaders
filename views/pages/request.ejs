@@ -83,15 +83,7 @@
 			}
 		</style>
 		<script class="init">
-			var siteData;
-			function escapeHTML(unsafe) {
-				return unsafe
-					.replace(/&/g, "&amp;")
-					.replace(/</g, "&lt;")
-					.replace(/>/g, "&gt;")
-					.replace(/"/g, "&quot;")
-					.replace(/'/g, "&#039;");
-			}
+			var siteData = {};
 			$(document).ready(function() {
 				// Setup - add a text input to each footer cell
 				$('#data tfoot th').each( function () {
@@ -133,7 +125,7 @@
 						{ "data": "value", "width":"75%" }
 					],
 					"dom": 'fBrtilp',
-					"pageLength": 50,
+					"pageLength": 100,
 					"stateSave" : true,
 				});
 				siteData.table.columns().every( function () {
@@ -212,6 +204,20 @@
 		<table id="data" class="display compact">
 			<thead><tr><th>Type</th><th>Name</th><th>Value</th></tr></thead>
 			<tfoot><tr><th>Type</th><th>Name</th><th>Value</th></tr></tfoot>
+			<% Object.keys(reply.headers).forEach(function(prop) { %>
+				<tr><td>header</td><td><%= prop %></td><td><%= reply.headers[prop] %></td></tr>
+			<% }); %>
+			<% Object.keys(reply.otherheaders).forEach(function(prop) { %>
+				<tr><td>header</td><td><%= prop %></td><td><%= reply.otherheaders[prop] %></td></tr>
+			<% }); %>
+			<% Object.keys(reply.info).forEach(function(prop) { %>
+				<tr><td>info</td><td><%= prop %></td><td><%= reply.info[prop] %></td></tr>
+			<% }); %>
+			<% 	var re = new RegExp(reply.links.self, "g");
+				var links = (JSON.parse(JSON.stringify(reply.links).replace(re, '.')));
+				Object.keys(links).forEach(function(prop) { %>
+					<tr><td>links</td><td><%= prop %></td><td><a href="<%= links[prop] %>"><%= links[prop] %></a></td></tr>
+			<% }); %>
 		</table>
 		<p class="center">This page displays the details of the web request including headers and cookies sent to the application. This is used for testing. The format of this page may change.</p>
 	</body>
