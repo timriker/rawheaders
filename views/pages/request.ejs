@@ -83,6 +83,7 @@
 			}
 		</style>
 		<script class="init">
+			var siteData;
 			function escapeHTML(unsafe) {
 				return unsafe
 					.replace(/&/g, "&amp;")
@@ -92,83 +93,58 @@
 					.replace(/'/g, "&#039;");
 			}
 			$(document).ready(function() {
-				$.getJSON("?format=json", function (result) {
-					siteData = result;
-					var re = new RegExp(siteData.links.self, "g");
-					var links = (JSON.parse(JSON.stringify(siteData.links).replace(re, '.')));
-					siteData.data = Object.keys(links).map(function(data){
-						return {"type":"link","name":data,"value":'<a href="'+escapeHTML(links[data])+'">'+escapeHTML(links[data])+'</a>'};
-					});
-					siteData.headerArray = Object.keys(siteData.headers).map(function(data){
-						return {"type":"header","name":data,"value":escapeHTML(siteData.headers[data])};
-					});
-					siteData.otherheaderArray = Object.keys(siteData.otherheaders).map(function(data){
-						return {"type":"header","name":data,"value":escapeHTML(siteData.otherheaders[data])};
-					});
-					siteData.cookieArray = Object.keys(siteData.cookies).map(function(data){
-						return {"type":"cookie","name":data,"value":escapeHTML(siteData.cookies[data])};
-					});
-					siteData.infoArray = Object.keys(siteData.info).map(function(data){
-						return {"type":"info","name":data,"value":escapeHTML(siteData.info[data])};
-					});
-					Array.prototype.push.apply(siteData.data,siteData.headerArray);
-					Array.prototype.push.apply(siteData.data,siteData.otherheaderArray);
-					Array.prototype.push.apply(siteData.data,siteData.cookieArray);
-					Array.prototype.push.apply(siteData.data,siteData.infoArray);
-					// Setup - add a text input to each footer cell
-					$('#data tfoot th').each( function () {
-						var title = $(this).text();
-						$(this).html( '<input type="text" style="width: 100%" placeholder="Search '+title+'" />' );
-					} );
-					siteData.table = $('#data').DataTable({
-						"autoWidth": false,
-						"buttons": [
-							{
-								"text": 'Reset',
-								"action": function ( e, dt, node, config ) {
-									dt.search('').columns().search('').draw();
-								}
-							},
-							{
-								"extend": "columnsToggle",
-							},
-							{
-								"extend": 'copy'
-							},
-							{
-								"extend": 'print'
-							},
-							{
-								"extend": 'csv',
-								"title": 'requestdata'
-							},
-							{
-								"text": 'Reload',
-								"action": function ( e, dt, node, config ) {
-									location.reload();
-								}
+				// Setup - add a text input to each footer cell
+				$('#data tfoot th').each( function () {
+					var title = $(this).text();
+					$(this).html( '<input type="text" style="width: 100%" placeholder="Search '+title+'" />' );
+				} );
+				siteData.table = $('#data').DataTable({
+					"autoWidth": false,
+					"buttons": [
+						{
+							"text": 'Reset',
+							"action": function ( e, dt, node, config ) {
+								dt.search('').columns().search('').draw();
 							}
-						],
-						"columns": [
-							{ "data": "type", "width":"5%" },
-							{ "data": "name", "width":"20%" },
-							{ "data": "value", "width":"75%" }
-						],
-						"data": siteData.data,
-						"dom": 'fBrtilp',
-						"pageLength": 50,
-						"stateSave" : true,
-					});
-					siteData.table.columns().every( function () {
-						var that = this;
+						},
+						{
+							"extend": "columnsToggle",
+						},
+						{
+							"extend": 'copy'
+						},
+						{
+							"extend": 'print'
+						},
+						{
+							"extend": 'csv',
+							"title": 'requestdata'
+						},
+						{
+							"text": 'Reload',
+							"action": function ( e, dt, node, config ) {
+								location.reload();
+							}
+						}
+					],
+					"columns": [
+						{ "data": "type", "width":"5%" },
+						{ "data": "name", "width":"20%" },
+						{ "data": "value", "width":"75%" }
+					],
+					"dom": 'fBrtilp',
+					"pageLength": 50,
+					"stateSave" : true,
+				});
+				siteData.table.columns().every( function () {
+					var that = this;
 
-						$( 'input', this.footer() ).on( 'keyup change clear', function () {
-							if ( that.search() !== this.value ) {
-								that
-									.search( this.value )
-									.draw();
-							}
-						});
+					$( 'input', this.footer() ).on( 'keyup change clear', function () {
+						if ( that.search() !== this.value ) {
+							that
+								.search( this.value )
+								.draw();
+						}
 					});
 				});
 			});
@@ -180,6 +156,7 @@
 				<ul id="prefBoxLinks">
 					<li><a href="?signmein">Sign In</a></li>
 					<li><a href="?signmeout">Sign Out</a></li>
+					<li><a href="./return">return</a></li>
 				</ul>
 			</div>
 			<div id="PFlogo">
