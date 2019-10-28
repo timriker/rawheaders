@@ -11,7 +11,7 @@ var express = require('express');
 var cookie = require('cookie');
 var stringify = require('json-stable-stringify');
 
-const cookiename = 'sso-redir';
+const cookiename = 'header-redir';
 var port =  process.env.PORT || 8081;
 var app = express();
 
@@ -26,11 +26,21 @@ app.use(function(req, res, next) {
         //req.headers['x-forwarded-proto'] = 'https';
     }
     //console.log(req.headers);
-    req.root = req.protocol + '://' + req.hostname;
+    req.root = req.protocol + '://' + req.hostname + ':' + req.port;
     next();
 });
 
-app.head('/', function (req, res) {
+// restrict access to /return and WAM can log you in and you bounce back to where you came from
+app.all('/return', function (req, res){
+    if (req.headers.referer) {
+        res.redirect(307, req.headers.referer);
+    } else {
+        res.redirect(307, '..');
+    }
+    res.end();
+});
+
+app.head('/*', function (req, res) {
     for (key in req.headers) {
         if (/policy/.test(key)) {
             res.setHeader(key, req.headers[key]);
@@ -39,14 +49,9 @@ app.head('/', function (req, res) {
     res.end();
 });
 
-// restrict access to /restricted and WAM can then log you in
-app.all('/restricted', function (req, res){
-    res.redirect(307, '..');
-});
-
 app.all('/*', function (req, res) {
     // return html page when requested
-    if (req.query.format === undefined || req.query.format !== 'json') {
+    if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
         res.sendFile(`${__dirname}/request.html`);
         return;
     }
@@ -83,7 +88,7 @@ app.all('/*', function (req, res) {
         "json": req.root + '?format=json',
         "in": req.root + '?in=' + encodeURIComponent(req.root),
         "out": req.root + '?out=' + encodeURIComponent(req.root),
-        "restricted": 'restricted',
+        "return": req.root + '/return',
         "self": req.root,
         "signin": signin,
         "signout": signout
