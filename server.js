@@ -20,6 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 app.set('trust proxy', true)
 app.set('json spaces', 4);
+app.set('view engine', 'ejs')
 app.use(function(req, res, next) {
     if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
         // F5 keeps losing the X-Forwarded-Proto setting
@@ -39,6 +40,11 @@ app.all('/return', function (req, res){
     }
     res.end();
 });
+
+app.get('/render*',function (req, res) {
+    res.render('pages/request.ejs');
+    return;
+})
 
 app.head('/*', function (req, res) {
     for (key in req.headers) {
