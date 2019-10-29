@@ -105,6 +105,7 @@ app.all('/*', function (req, res) {
     reply.info = {
         "date": (new Date()).toISOString(),
         "httpversion": req.httpVersion,
+        "header_count": Object.keys(req.headers).length,
         "host": req.host,
         "hostname": req.hostname,
         "ip": req.ip,
