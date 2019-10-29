@@ -203,24 +203,26 @@
 		<h1>Request Data (<a href="?format=json">json</a>)</h1>
 		<table id="data" class="display compact">
 			<thead><tr><th>Type</th><th>Name</th><th>Value</th></tr></thead>
+			<tbody>
+			<% Object.keys(reply.headers).forEach(function(prop) {
+				%><tr><td>header</td><td><%= prop %></td><td><%= reply.headers[prop] %></td></tr>
+			<% });
+			Object.keys(reply.otherheaders).forEach(function(prop) {
+				%><tr><td>header</td><td><%= prop %></td><td><%= reply.otherheaders[prop] %></td></tr>
+			<% });
+			Object.keys(reply.info).forEach(function(prop) {
+				%><tr><td>info</td><td><%= prop %></td><td><%= reply.info[prop] %></td></tr>
+			<% });
+			var re = new RegExp(reply.links.self, "g");
+			var links = (JSON.parse(JSON.stringify(reply.links).replace(re, '.')));
+			Object.keys(links).forEach(function(prop) {
+				%><tr><td>links</td><td><%= prop %></td><td><a href="<%= links[prop] %>"><%= links[prop] %></a></td></tr>
+			<% });
+			Object.keys(reply.cookies).forEach(function(prop) {
+				%><tr><td>cookie</td><td><%= prop %></td><td><%= reply.cookies[prop] %></td></tr>
+			<% });
+			%></tbody>
 			<tfoot><tr><th>Type</th><th>Name</th><th>Value</th></tr></tfoot>
-			<% Object.keys(reply.headers).forEach(function(prop) { %>
-				<tr><td>header</td><td><%= prop %></td><td><%= reply.headers[prop] %></td></tr>
-			<% }); %>
-			<% Object.keys(reply.otherheaders).forEach(function(prop) { %>
-				<tr><td>header</td><td><%= prop %></td><td><%= reply.otherheaders[prop] %></td></tr>
-			<% }); %>
-			<% Object.keys(reply.info).forEach(function(prop) { %>
-				<tr><td>info</td><td><%= prop %></td><td><%= reply.info[prop] %></td></tr>
-			<% }); %>
-			<% 	var re = new RegExp(reply.links.self, "g");
-				var links = (JSON.parse(JSON.stringify(reply.links).replace(re, '.')));
-				Object.keys(links).forEach(function(prop) { %>
-					<tr><td>links</td><td><%= prop %></td><td><a href="<%= links[prop] %>"><%= links[prop] %></a></td></tr>
-			<% }); %>
-			<% Object.keys(reply.cookies).forEach(function(prop) { %>
-				<tr><td>cookie</td><td><%= prop %></td><td><%= reply.cookies[prop] %></td></tr>
-			<% }); %>
 		</table>
 		<p class="center">This page displays the details of the web request including headers and cookies sent to the application. This is used for testing. The format of this page may change.</p>
 	</body>
