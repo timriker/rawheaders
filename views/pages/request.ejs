@@ -148,7 +148,7 @@
 				<ul id="prefBoxLinks">
 					<li><a href="?signmein">Sign In</a></li>
 					<li><a href="?signmeout">Sign Out</a></li>
-					<li><a href="./return">return</a></li>
+					<li><a href="<%= reply.links.relreflect %>">reflect</a></li>
 				</ul>
 			</div>
 			<div id="PFlogo">
@@ -214,7 +214,7 @@
 				%><tr><td>info</td><td><%= prop %></td><td><%= reply.info[prop] %></td></tr>
 			<% });
 			var re = new RegExp(reply.links.self, "g");
-			var links = (JSON.parse(JSON.stringify(reply.links).replace(re, '.')));
+			var links = (JSON.parse(JSON.stringify(reply.links).replace(re, reply.info.path)));
 			Object.keys(links).forEach(function(prop) {
 				%><tr><td>links</td><td><%= prop %></td><td><a href="<%= links[prop] %>"><%= links[prop] %></a></td></tr>
 			<% });

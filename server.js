@@ -27,12 +27,13 @@ app.use(function(req, res, next) {
         //req.headers['x-forwarded-proto'] = 'https';
     }
     //console.log(req.headers);
-    req.root = req.protocol + '://' + req.headers.host;
+    req.root = req.protocol + '://' + req.host + req.path;
+    //console.log(req.root);
     next();
 });
 
-// restrict access to /return and WAM can log you in and you bounce back to where you came from
-app.all('/return', function (req, res){
+// restrict access to /reflect and WAM can log you in and you bounce back to where you came from
+app.all('*/reflect', function (req, res){
     if (req.headers.referer) {
         res.redirect(307, req.headers.referer);
     } else {
@@ -52,8 +53,8 @@ app.head('/*', function (req, res) {
 });
 
 app.all('/*', function (req, res) {
-    var signin = req.root + '?' + (req.headers["policy-signin"] || "signmein");
-    var signout = req.root + '?' + (req.headers["policy-signout"] || "signmeout");
+    var signin = req.root + '?' + (req.headers['policy-signin'] || 'signmein');
+    var signout = req.root + '?' + (req.headers['policy-signout'] || 'signmeout');
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
     res.setHeader('Cache-Control', 'no-cache, must-revalidate');
 
@@ -79,15 +80,24 @@ app.all('/*', function (req, res) {
     var reply = {};
     //reply.query = req.query;
     //reply.env = process.env;
+    var reflect = '';
+    if (req.root.endsWith('/')) {
+        reflect = req.root + 'reflect';
+        relreflect = './reflect';
+    } else {
+        reflect = req.root + '/reflect';
+        relreflect = req.path + '/reflect';
+    }
     reply.links = {
-        "html": req.root + '?format=html',
-        "json": req.root + '?format=json',
-        "in": req.root + '?in=' + encodeURIComponent(req.root),
-        "out": req.root + '?out=' + encodeURIComponent(req.root),
-        "return": req.root + '/return',
-        "self": req.root,
-        "signin": signin,
-        "signout": signout
+        'html': req.root + '?format=html',
+        'json': req.root + '?format=json',
+        'in': req.root + '?in=' + encodeURIComponent(req.root),
+        'out': req.root + '?out=' + encodeURIComponent(req.root),
+        'reflect': reflect,
+        'relreflect': relreflect,
+        'self': req.root,
+        'signin': signin,
+        'signout': signout
     };
     reply.headers = {};
     reply.otherheaders = {};
@@ -103,25 +113,26 @@ app.all('/*', function (req, res) {
         }
     };
     reply.info = {
-        "date": (new Date()).toISOString(),
-        "httpversion": req.httpVersion,
-        "header_count": Object.keys(req.headers).length,
-        "host": req.host,
-        "hostname": req.hostname,
-        "ip": req.ip,
-        "method": req.method,
-        "originalurl": req.originalUrl,
-        "root": req.root,
-        "url": req.url
+        'date': (new Date()).toISOString(),
+        'httpversion': req.httpVersion,
+        'header_count': Object.keys(req.headers).length,
+        'header_size': JSON.stringify(req.headers).length,
+        'host': req.host,
+        'hostname': req.hostname,
+        'ip': req.ip,
+        'method': req.method,
+        'originalurl': req.originalUrl,
+        'path': req.path,
+        'root': req.root,
+        'url': req.url
     };
     reply.cookies = cookies;
     //console.log(reply);
     if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
-        // return html page when requested
-        res.render('pages/request.ejs', { "reply": reply });
-        return;
+        // html page if supported
+        res.render('pages/request.ejs', { 'reply': reply });
     } else {
-        // otherwise return json
+        // otherwise json
         res.json(reply);        
     }
 })
@@ -130,5 +141,5 @@ var server = app.listen(port, function () {
     var host = server.address().address;
     var port = server.address().port;
 
-    console.log("Listening at http://%s:%s", host, port);
+    console.log('Listening at http://%s:%s', host, port);
 })
