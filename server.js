@@ -62,12 +62,14 @@ app.all('/*', function (req, res) {
     if (req.query.in) {
         res.cookie(cookiename, req.query.in, { path:'/', maxAge:3600000});
         res.redirect(signin);
+        return;
     }
 
     // save redirect and trigger WAM signout
     if (req.query.out) {
         res.cookie(cookiename, req.query.out, { path:'/', maxAge:3600000});
         res.redirect(signout);
+        return;
     }
 
     var cookies = cookie.parse(req.headers.cookie || '');
@@ -75,6 +77,7 @@ app.all('/*', function (req, res) {
     if (cookies[cookiename]) {
         res.clearCookie(cookiename, { path: '/' });
         res.redirect(cookies[cookiename]);
+        return;
     };
 
     var reply = {};
@@ -133,7 +136,7 @@ app.all('/*', function (req, res) {
         res.render('pages/request.ejs', { 'reply': reply });
     } else {
         // otherwise json
-        res.json(reply);        
+        res.json(reply);
     }
 })
 
