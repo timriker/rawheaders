@@ -79,15 +79,15 @@ app.all('/*', function (req, res) {
     };
 
     var status = 200;
-    var timeout = 0;
+    var delay = 0;
     var production = true;
     if (/(localhost|-(dev|test|stage|int|uat|load)\.)/i.test(req.hostname)) {
         production = false;
     }
 
-    // timeout for delayed reply
-    if (!production && !isNaN(req.query.timeout)) {
-        timeout = parseInt(req.query.timeout);
+    // delay for delayed reply
+    if (!production && !isNaN(req.query.delay)) {
+        delay = parseInt(req.query.delay);
     }
 
     // status for manual status code
@@ -137,19 +137,19 @@ app.all('/*', function (req, res) {
     });
     reply.info = {
         'date': (new Date()).toISOString(),
-        'httpversion': req.httpVersion,
+        'delay': delay,
         'header_count': Object.keys(req.headers).length,
         'header_size': JSON.stringify(req.headers).length,
         'host': req.host,
         'hostname': req.hostname,
+        'httpversion': req.httpVersion,
         'ip': req.ip,
         'method': req.method,
         'originalurl': req.originalUrl,
-        'query': JSON.stringify(req.query),
         'path': req.path,
+        'query': JSON.stringify(req.query),
         'root': req.root,
         'status': status,
-        'timeout': timeout,
         'url': req.url
     };
     if (!production) {
@@ -169,7 +169,7 @@ app.all('/*', function (req, res) {
             // otherwise json
             res.status(status).json(reply);
         }
-    }, timeout);
+    }, delay);
 })
 
 var server = app.listen(port, function () {
