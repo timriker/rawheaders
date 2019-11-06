@@ -137,7 +137,6 @@ app.all('/*', function (req, res) {
     });
     reply.info = {
         'date': (new Date()).toISOString(),
-        'delay': delay,
         'header_count': Object.keys(req.headers).length,
         'header_size': JSON.stringify(req.headers).length,
         'host': req.host,
@@ -149,10 +148,11 @@ app.all('/*', function (req, res) {
         'path': req.path,
         'query': JSON.stringify(req.query),
         'root': req.root,
-        'status': status,
         'url': req.url
     };
     if (!production) {
+        reply.info['delay'] = delay;
+        reply.info['status'] = status;
         reply.info['versions'] = JSON.stringify(process.versions);
     }
     reply.cookies = cookies;
