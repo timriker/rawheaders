@@ -57,6 +57,8 @@ app.head('/*', function (req, res) {
 app.all('/*', function (req, res) {
     var signin = req.root + '?' + (req.headers['policy-signin'] || 'signmein');
     var signout = req.root + '?' + (req.headers['policy-signout'] || 'signmeout');
+    var status = 200;
+    var timeout = 0;
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
     res.setHeader('Cache-Control', 'no-cache, must-revalidate');
 
@@ -72,6 +74,15 @@ app.all('/*', function (req, res) {
         res.cookie(cookiename, req.query.out, { path:'/', maxAge:3600000});
         res.redirect(signout);
         return;
+    }
+    // timeout for delayed reply
+    if (!isNaN(req.query.timeout)) {
+        timeout = parseInt(req.query.timeout);
+    }
+
+    // status for manual status code
+    if (!isNaN(req.query.status)) {
+        status = parseInt(req.query.status);
     }
 
     var cookies = cookie.parse(req.headers.cookie || '');
@@ -132,8 +143,11 @@ app.all('/*', function (req, res) {
         'ip': req.ip,
         'method': req.method,
         'originalurl': req.originalUrl,
+        'query': JSON.stringify(req.query),
         'path': req.path,
         'root': req.root,
+        'status': status,
+        'timeout': timeout,
         'url': req.url
     };
     reply.cookies = cookies;
@@ -142,14 +156,15 @@ app.all('/*', function (req, res) {
             reply.cookies[prop+'-decoded'] = JSON.stringify(jwtDecode(cookies[prop]));
         } catch(e) {}
     });
-    //console.log(reply);
-    if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
-        // html page if supported
-        res.render('pages/request.ejs', { 'reply': reply });
-    } else {
-        // otherwise json
-        res.json(reply);
-    }
+    setTimeout(function() {
+        if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
+            // html page if supported
+            res.status(status).render('pages/request.ejs', { 'reply': reply });
+        } else {
+            // otherwise json
+            res.status(status).json(reply);
+        }
+    }, timeout);
 })
 
 var server = app.listen(port, function () {
