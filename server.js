@@ -10,6 +10,7 @@
 var express = require('express');
 var cookie = require('cookie');
 var stringify = require('json-stable-stringify');
+var emailjsmimecodec = require('emailjs-mime-codec');
 
 const cookiename = 'header-redir';
 var port =  process.env.PORT || 8081;
@@ -131,6 +132,11 @@ app.all('/*', function (req, res) {
         'url': req.url
     };
     reply.cookies = cookies;
+    Object.keys(reply.headers).forEach(function(prop) {
+        if (reply.headers[prop].startsWith('=?')) {
+            reply.headers[prop+'-decoded'] = emailjsmimecodec.mimeWordDecode(reply.headers[prop]);
+        }
+    });
     //console.log(reply);
     if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
         // html page if supported
