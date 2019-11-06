@@ -34,11 +34,12 @@ app.use(function(req, res, next) {
 
 // restrict access to /reflect and WAM can log you in and you bounce back to where you came from
 app.all('*/reflect', function (req, res){
-    if (req.headers.referer) {
-        res.redirect(307, req.headers.referer);
-    } else {
+    // referer is lost. it will contain the login/signin url and not the original requester
+    //if (req.headers.referer) {
+    //    res.redirect(307, req.headers.referer);
+    //} else {
         res.redirect(307, '..');
-    }
+    //}
     res.end();
 });
 
