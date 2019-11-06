@@ -9,8 +9,8 @@
 
 var express = require('express');
 var cookie = require('cookie');
-var stringify = require('json-stable-stringify');
-var emailjsmimecodec = require('emailjs-mime-codec');
+var emailjsMimeCodec = require('emailjs-mime-codec');
+var jwtDecode = require('jwt-decode');
 
 const cookiename = 'header-redir';
 var port =  process.env.PORT || 8081;
@@ -117,6 +117,11 @@ app.all('/*', function (req, res) {
             reply.otherheaders[key] = req.headers[key];
         }
     };
+    Object.keys(reply.headers).forEach(function(prop) {
+        if (reply.headers[prop].startsWith('=?')) {
+            reply.headers[prop+'-decoded'] = emailjsMimeCodec.mimeWordDecode(reply.headers[prop]);
+        }
+    });
     reply.info = {
         'date': (new Date()).toISOString(),
         'httpversion': req.httpVersion,
@@ -132,10 +137,10 @@ app.all('/*', function (req, res) {
         'url': req.url
     };
     reply.cookies = cookies;
-    Object.keys(reply.headers).forEach(function(prop) {
-        if (reply.headers[prop].startsWith('=?')) {
-            reply.headers[prop+'-decoded'] = emailjsmimecodec.mimeWordDecode(reply.headers[prop]);
-        }
+    Object.keys(cookies).forEach(function(prop) {
+        try {
+            reply.cookies[prop+'-decoded'] = JSON.stringify(jwtDecode(cookies[prop]));
+        } catch(e) {}
     });
     //console.log(reply);
     if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
