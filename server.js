@@ -7,13 +7,14 @@
 // calling with ?out=<url> does SSO signout and then redirects to url
 // cookiename is the cookie passed to the client to remember where to redirect to
 
-var express = require('express');
-var cookie = require('cookie');
-var emailjsMimeCodec = require('emailjs-mime-codec');
-var jwtDecode = require('jwt-decode');
+const express = require('express');
+const cookie = require('cookie');
+const emailjsMimeCodec = require('emailjs-mime-codec');
+const jwtDecode = require('jwt-decode');
+const process = require('process');
 
 const cookiename = 'header-redir';
-var port =  process.env.PORT || 8081;
+var port = process.env.PORT || 8081;
 var app = express();
 
 // Middleware
@@ -36,12 +37,7 @@ app.use(function(req, res, next) {
 // restrict access to /reflect and WAM can log you in and you bounce back to where you came from
 app.all('*/reflect', function (req, res){
     // referer is lost. it will contain the login/signin url and not the original requester
-    //if (req.headers.referer) {
-    //    res.redirect(307, req.headers.referer);
-    //} else {
-        res.redirect(307, '..');
-    //}
-    res.end();
+    res.redirect(307, '..').end();
 });
 
 app.head('/*', function (req, res) {
@@ -57,41 +53,47 @@ app.head('/*', function (req, res) {
 app.all('/*', function (req, res) {
     var signin = req.root + '?' + (req.headers['policy-signin'] || 'signmein');
     var signout = req.root + '?' + (req.headers['policy-signout'] || 'signmeout');
-    var status = 200;
-    var timeout = 0;
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
     res.setHeader('Cache-Control', 'no-cache, must-revalidate');
 
     // save redirect and trigger WAM signin
     if (req.query.in) {
         res.cookie(cookiename, req.query.in, { path:'/', maxAge:3600000});
-        res.redirect(signin);
+        res.redirect(307, signin);
         return;
     }
 
     // save redirect and trigger WAM signout
     if (req.query.out) {
         res.cookie(cookiename, req.query.out, { path:'/', maxAge:3600000});
-        res.redirect(signout);
+        res.redirect(307, signout);
         return;
-    }
-    // timeout for delayed reply
-    if (!isNaN(req.query.timeout)) {
-        timeout = parseInt(req.query.timeout);
-    }
-
-    // status for manual status code
-    if (!isNaN(req.query.status)) {
-        status = parseInt(req.query.status);
     }
 
     var cookies = cookie.parse(req.headers.cookie || '');
     // detect cookie and do redirect
     if (cookies[cookiename]) {
         res.clearCookie(cookiename, { path: '/' });
-        res.redirect(cookies[cookiename]);
+        res.redirect(307, cookies[cookiename]);
         return;
     };
+
+    var status = 200;
+    var timeout = 0;
+    var production = true;
+    if (/(localhost|-(dev|test|stage|int|uat|load)\.)/i.test(req.hostname)) {
+        production = false;
+    }
+
+    // timeout for delayed reply
+    if (!production && !isNaN(req.query.timeout)) {
+        timeout = parseInt(req.query.timeout);
+    }
+
+    // status for manual status code
+    if (!production && !isNaN(req.query.status)) {
+        status = parseInt(req.query.status);
+    }
 
     var reply = {};
     //reply.query = req.query;
@@ -119,10 +121,10 @@ app.all('/*', function (req, res) {
     reply.otherheaders = {};
     for (key in req.headers) {
         if (/^policy/.test(key)) {
-            if (/(localhost|-(dev|test|stage|int|uat|load)\.)/i.test(req.hostname) || !(/^policy-(ldsmrn|ldsbdate|workforceid)/i.test(key))) {
-                reply.headers[key] = req.headers[key];
-            } else {
+            if (production && (/^policy-(ldsmrn|ldsbdate|workforceid)/i.test(key))) {
                 reply.headers[key] = '*****';
+            } else {
+                reply.headers[key] = req.headers[key];
             }
         } else {
             reply.otherheaders[key] = req.headers[key];
@@ -150,6 +152,9 @@ app.all('/*', function (req, res) {
         'timeout': timeout,
         'url': req.url
     };
+    if (!production) {
+        reply.info['versions'] = JSON.stringify(process.versions);
+    }
     reply.cookies = cookies;
     Object.keys(cookies).forEach(function(prop) {
         try {
