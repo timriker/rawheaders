@@ -4,13 +4,8 @@
 		<title>Request Data</title>
 		<meta name="viewport" content="width=device-width, initial-scale=2.0" />
 		<meta name="author" content="Tim Riker" />
-		<link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css"/>
-		<script src="//code.jquery.com/jquery-3.3.1.js"></script>
-		<script src="//cdn.datatables.net/1.10.18/js/jquery.dataTables.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.5.6/js/buttons.colVis.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
-		<script src="//cdn.datatables.net/buttons/1.5.6/js/buttons.print.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.css"/>
+		<script type="text/javascript" src="//cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.js"></script>
 		<style>
 			table.dataTable td {
 				word-break: break-all;
@@ -95,6 +90,7 @@
 					for (var key in vars) {
 						if (key == 'q') {
 							siteData.table.search(vars[key]);
+							$('#data_filter input').value = vars[key];
 						}
 						if (/^c\([0-9]\)*$/.key) {
 							colnum = key.replace(/[^0-9]*/g,'');
@@ -104,6 +100,7 @@
 					$('#data tfoot th input').each( function (colnum) {
 						this.value = siteData.table.column(colnum).search();
 					});
+					siteData.table.draw();
 				}
 			};
 			function UpdateHash(table) {
@@ -124,7 +121,7 @@
 				// Setup - add a text input to each footer cell
 				$('#data tfoot th').each( function () {
 					var title = $(this).text();
-					$(this).html( '<input type="text" style="width: 100%" placeholder="Search '+title+'" />' );
+					$(this).html( '<input type="search" style="width: 100%" placeholder="Search '+title+'" />' );
 				} );
 				siteData.table = $('#data').DataTable({
 					"autoWidth": false,
