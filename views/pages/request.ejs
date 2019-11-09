@@ -84,7 +84,43 @@
 		</style>
 		<script class="init">
 			var siteData = {};
-			$(document).ready(function() {
+			function LoadHash() {
+				if (window.location.href.indexOf('#') >= 0) {
+					var vars = {};
+					var hashes = window.location.href.slice(window.location.href.indexOf('#') + 1).split('&');
+					for (var i = 0; i < hashes.length; i++) {
+						hash = hashes[i].split('=');
+						vars[hash[0]] = hash[1];
+					}
+					for (var key in vars) {
+						if (key == 'q') {
+							siteData.table.search(vars[key]);
+						}
+						if (/^c\([0-9]\)*$/.key) {
+							colnum = key.replace(/[^0-9]*/g,'');
+							siteData.table.col(colnum).search(vars[key]);
+						}
+					}
+					$('#data tfoot th input').each( function (colnum) {
+						this.value = siteData.table.column(colnum).search();
+					});
+				}
+			};
+			function UpdateHash(table) {
+				var parameters = [];
+				var search = table.search();
+				if (search && search != '') {
+					parameters.push('q='+search);
+				}
+				table.columns().every( function () {
+					var search = this.search();
+					if (search && search != '') {
+						parameters.push('c'+this.index()+'='+search);
+					}
+				} );
+				window.location.hash = parameters.join("&");
+			};
+			$(function() {
 				// Setup - add a text input to each footer cell
 				$('#data tfoot th').each( function () {
 					var title = $(this).text();
@@ -128,6 +164,9 @@
 					"pageLength": 100,
 					"stateSave" : true,
 				});
+				siteData.table.on('draw', function () {
+					UpdateHash(siteData.table);
+				});
 				siteData.table.columns().every( function () {
 					var that = this;
 
@@ -139,6 +178,7 @@
 						}
 					});
 				});
+				LoadHash();
 			});
 		</script>
 	</head>
