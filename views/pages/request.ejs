@@ -79,6 +79,13 @@
 		</style>
 		<script class="init">
 			var siteData = {};
+			function UpdateFilterInputs() {
+				$('#data_filter input').value = siteData.table.search();
+				$('#data tfoot th input').each( function (colnum) {
+					this.value = siteData.table.column(colnum).search();
+				});
+				siteData.table.draw();
+			}
 			function LoadHash() {
 				if (window.location.href.indexOf('#') >= 0) {
 					var vars = {};
@@ -90,17 +97,13 @@
 					for (var key in vars) {
 						if (key == 'q') {
 							siteData.table.search(vars[key]);
-							$('#data_filter input').value = vars[key];
 						}
 						if (/^c\([0-9]\)*$/.key) {
 							colnum = key.replace(/[^0-9]*/g,'');
 							siteData.table.col(colnum).search(vars[key]);
 						}
 					}
-					$('#data tfoot th input').each( function (colnum) {
-						this.value = siteData.table.column(colnum).search();
-					});
-					siteData.table.draw();
+					UpdateFilterInputs();
 				}
 			};
 			function UpdateHash(table) {
@@ -129,7 +132,8 @@
 						{
 							"text": 'Reset',
 							"action": function ( e, dt, node, config ) {
-								dt.search('').columns().search('').draw();
+								dt.search('').columns().search('');
+								UpdateFilterInputs();
 							}
 						},
 						{
