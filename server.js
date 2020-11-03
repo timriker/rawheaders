@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.disable('x-powered-by');
 app.set('trust proxy', true)
 app.set('json spaces', 4);
-app.set('view engine', 'ejs')
+app.set('view engine', 'ejs');
 app.use(function(req, res, next) {
     if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
         // F5 keeps losing the X-Forwarded-Proto setting
@@ -132,7 +132,7 @@ app.all('/*', function (req, res) {
     };
     Object.keys(reply.headers).forEach(function(prop) {
         if (reply.headers[prop].startsWith('=?')) {
-            reply.headers[prop+'-decoded'] = emailjsMimeCodec.mimeWordDecode(reply.headers[prop]);
+            reply.headers[prop+'-decoded'] = emailjsMimeCodec.mimeWordsDecode(reply.headers[prop]);
         }
     });
     reply.info = {
