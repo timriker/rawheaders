@@ -25,12 +25,12 @@ app.set('trust proxy', true)
 app.set('json spaces', 4);
 app.set('view engine', 'ejs');
 app.use(function(req, res, next) {
-    if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
+    //if (req.get('host') && req.get('host').indexOf('localhost') == -1) {
         // F5 keeps losing the X-Forwarded-Proto setting
         //req.headers['x-forwarded-proto'] = 'https';
-    }
+    //}
     //console.log(req.headers);
-    req.root = req.protocol + '://' + req.host + req.path;
+    req.root = req.protocol + '://' + req.hostname + req.path;
     //console.log(req.root);
     next();
 });
@@ -140,7 +140,6 @@ app.all('/*', function (req, res) {
         'date': (new Date()).toISOString(),
         'header_count': Object.keys(req.headers).length,
         'header_size': JSON.stringify(req.headers).length,
-        'host': req.host,
         'hostname': req.hostname,
         'httpversion': req.httpVersion,
         'ip': req.ip,
