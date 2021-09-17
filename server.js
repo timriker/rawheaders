@@ -15,6 +15,7 @@ const process = require('process');
 
 const cookiename = 'header-redir';
 var port = process.env.PORT || 8081;
+var host = process.env.HOST || '';
 var app = express();
 
 // Middleware
@@ -158,7 +159,9 @@ app.all('/*', function (req, res) {
     reply.cookies = cookies;
     Object.keys(cookies).forEach(function(prop) {
         try {
-            reply.cookies[prop+'-decoded'] = JSON.stringify(jwtDecode(cookies[prop]));
+            reply.cookies[prop+'-decoded'] =
+                JSON.stringify(jwtDecode(cookies[prop], { header: true })) +
+                JSON.stringify(jwtDecode(cookies[prop]));
         } catch(e) {}
     });
     setTimeout(function() {
@@ -172,7 +175,7 @@ app.all('/*', function (req, res) {
     }, delay);
 })
 
-var server = app.listen(port, function () {
+var server = app.listen(port, host, function () {
     var host = server.address().address;
     var port = server.address().port;
 
