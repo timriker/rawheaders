@@ -12,11 +12,29 @@ const cookie = require('cookie');
 const emailjsMimeCodec = require('emailjs-mime-codec');
 const jwtDecode = require('jwt-decode');
 const process = require('process');
+const { query } = require('express');
 
 const cookiename = 'header-redir';
 var port = process.env.PORT || 8081;
 var host = process.env.HOST || '';
 var app = express();
+
+function createJPEG(width, height) {
+    let jpeg = require('jpeg-js');
+
+    //console.log('jpeg width:%d, height:%d', width, height);
+    let frameData = new Buffer.alloc(width * height * 4);
+    let i = 0;
+    while (i < frameData.length) {
+        frameData[i++] = Math.floor(Math.random() * 256);
+    }
+    let rawImageData = {
+        data: frameData,
+        width: width,
+        height: height,
+    };
+    return jpeg.encode(rawImageData, 50);
+}
 
 // Middleware
 app.use(express.urlencoded({ extended: true }));
@@ -96,10 +114,24 @@ app.all('/*', function (req, res) {
         status = parseInt(req.query.status);
     }
 
+    if (!production && req.query.jpeg) {
+        let width = req.query.jpeg.split('x')[0];
+        let height = req.query.jpeg.split('x')[1];
+        var jpegImage = createJPEG(width, height);
+    }
+
     var reply = {};
     //reply.query = req.query;
     //reply.env = process.env;
     var reflect = '';
+
+    if (!production && req.query.inlinejpeg) {
+        let width = req.query.inlinejpeg.split('x')[0];
+        let height = req.query.inlinejpeg.split('x')[1];
+        let jpegImage = createJPEG(width, height);
+        reply.inlinejpeg = jpegImage.data.toString('base64');
+    }
+
     if (req.root.endsWith('/')) {
         reflect = req.root + 'reflect';
         relreflect = './reflect';
@@ -164,7 +196,11 @@ app.all('/*', function (req, res) {
         } catch(e) {}
     });
     setTimeout(function() {
-        if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
+        if (typeof(jpegImage) != 'undefined') {
+            res.setHeader('Content-Length', jpegImage.data.length);
+            res.writeHead(200, {'Content-Type': 'image/jpeg'});
+            res.end(jpegImage.data, 'binary');
+        } else if (req.accepts('html') && (req.query.format === undefined || req.query.format === 'html')) {
             // html page if supported
             res.status(status).render('pages/request.ejs', { 'reply': reply });
         } else {

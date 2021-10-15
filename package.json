@@ -11,10 +11,11 @@
   "author": "Tim Riker <Tim@Rikers.org> (https://rikers.org)",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16",
+    "cookie": "*",
     "ejs": "*",
     "emailjs-mime-codec": "*",
-    "cookie": "*",
+    "express": "^4.16",
+    "jpeg-js": "*",
     "jwt-decode": "*"
   },
   "devDependencies": {
