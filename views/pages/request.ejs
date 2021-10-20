@@ -262,6 +262,12 @@
 			Object.keys(reply.cookies).forEach(function(prop) {
 				%><tr><td>cookie</td><td><%= prop %></td><td><%= reply.cookies[prop] %></td></tr>
 			<% });
+			Object.keys(reply.cookiesdecoded).forEach(function(prop) {
+				%><tr><td>cookiedecoded</td><td><%= prop %></td><td><pre><%= JSON.stringify(reply.cookiesdecoded[prop], null, 2) %></pre></td></tr>
+			<% });
+			Object.keys(reply.headersdecoded).forEach(function(prop) {
+				%><tr><td>headerdecoded</td><td><%= prop %></td><td><%= reply.headersdecoded[prop] %></td></tr>
+			<% });
 			%></tbody>
 			<tfoot><tr><th>Type</th><th>Name</th><th>Value</th></tr></tfoot>
 		</table>

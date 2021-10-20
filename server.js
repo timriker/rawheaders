@@ -163,15 +163,17 @@ app.all('/*', function (req, res) {
             reply.otherheaders[key] = req.headers[key];
         }
     };
+    reply.headersdecoded = {};
     Object.keys(reply.headers).forEach(function(prop) {
         if (reply.headers[prop].startsWith('=?')) {
-            reply.headers[prop+'-decoded'] = emailjsMimeCodec.mimeWordsDecode(reply.headers[prop]);
+            reply.headersdecoded[prop] = emailjsMimeCodec.mimeWordsDecode(reply.headers[prop]);
         }
     });
     reply.info = {
         'date': (new Date()).toISOString(),
         'header_count': Object.keys(req.headers).length,
-        'header_size': JSON.stringify(req.headers).length,
+        // FIXME: approximate
+        'header_size': req.rawHeaders.toString().length,
         'hostname': req.hostname,
         'httpversion': req.httpVersion,
         'ip': req.ip,
@@ -188,11 +190,13 @@ app.all('/*', function (req, res) {
         reply.info['versions'] = JSON.stringify(process.versions);
     }
     reply.cookies = cookies;
+    reply.cookiesdecoded = {};
     Object.keys(cookies).forEach(function(prop) {
         try {
-            reply.cookies[prop+'-decoded'] =
-                JSON.stringify(jwtDecode(cookies[prop], { header: true })) +
-                JSON.stringify(jwtDecode(cookies[prop]));
+            let decoded = {};
+            decoded.header = jwtDecode(cookies[prop], { header: true });
+            decoded.payload = jwtDecode(cookies[prop]);
+            reply.cookiesdecoded[prop] = decoded;
         } catch(e) {}
     });
     setTimeout(function() {
