@@ -218,6 +218,7 @@ app.all('/*', function (req, res) {
             reply.cookiesdecoded[prop] = decoded;
         } catch(e) {}
     });
+    reply=sortJSON(reply);
     setTimeout(function() {
         if (typeof(jpegImage) != 'undefined') {
             res.setHeader('Content-Length', jpegImage.data.length);
@@ -228,7 +229,7 @@ app.all('/*', function (req, res) {
             res.status(status).render('pages/request.ejs', { 'reply': reply });
         } else {
             // otherwise json
-            res.status(status).json(sortJSON(reply));
+            res.status(status).json(reply);
         }
     }, delay);
 })
