@@ -64,9 +64,7 @@ app.use(function(req, res, next) {
         // F5 keeps losing the X-Forwarded-Proto setting
         //req.headers['x-forwarded-proto'] = 'https';
     //}
-    //console.log(req.headers);
     req.root = req.protocol + '://' + req.hostname + req.path;
-    //console.log(req.root);
     next();
 });
 
@@ -151,6 +149,7 @@ app.all('/*', function (req, res) {
     }
 
     var reflect = '';
+    var relreflect = '';
     if (req.root.endsWith('/')) {
         reflect = req.root + 'reflect';
         relreflect = './reflect';
@@ -235,8 +234,8 @@ app.all('/*', function (req, res) {
 })
 
 var server = app.listen(port, host, function () {
-    var host = server.address().address;
-    var port = server.address().port;
+    host = server.address().address;
+    port = server.address().port;
 
     console.log('Listening at http://%s:%s', host, port);
 })
