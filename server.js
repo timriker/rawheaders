@@ -36,6 +36,23 @@ function createJPEG(width, height) {
     return jpeg.encode(rawImageData, 50);
 }
 
+function sortJSON(object) {
+	if (object instanceof Array) {
+		for (var i = 0; i < object.length; i++) {
+			object[i] = sortJSON(object[i]);
+		}
+		return object;
+	} else if (typeof object != "object") return object;
+
+	var keys = Object.keys(object);
+	keys = keys.sort();
+	var newObject = {};
+	for (var i = 0; i < keys.length; i++) {
+		newObject[keys[i]] = sortJSON(object[keys[i]])
+	}
+	return newObject;
+}
+
 // Middleware
 app.use(express.urlencoded({ extended: true }));
 app.disable('x-powered-by');
@@ -121,9 +138,10 @@ app.all('/*', function (req, res) {
     }
 
     var reply = {};
-    //reply.query = req.query;
-    //reply.env = process.env;
-    var reflect = '';
+    if (!production) {
+        reply.query = req.query;
+        //reply.env = process.env;
+    }
 
     if (!production && req.query.inlinejpeg) {
         let width = req.query.inlinejpeg.split('x')[0];
@@ -132,6 +150,7 @@ app.all('/*', function (req, res) {
         reply.inlinejpeg = jpegImage.data.toString('base64');
     }
 
+    var reflect = '';
     if (req.root.endsWith('/')) {
         reflect = req.root + 'reflect';
         relreflect = './reflect';
@@ -209,7 +228,7 @@ app.all('/*', function (req, res) {
             res.status(status).render('pages/request.ejs', { 'reply': reply });
         } else {
             // otherwise json
-            res.status(status).json(reply);
+            res.status(status).json(sortJSON(reply));
         }
     }, delay);
 })
