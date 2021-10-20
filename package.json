@@ -1,7 +1,7 @@
 {
   "name": "header",
-  "version": "1.1.1",
-  "description": "server for dumping headers and handling SSO login/logout",
+  "version": "1.3.0",
+  "description": "dump headers and handle SSO login/logout",
   "main": "server.js",
   "scripts": {
     "start": "node --max-http-header-size=32768 server.js",
