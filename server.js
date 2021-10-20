@@ -47,8 +47,8 @@ function sortJSON(object) {
 	var keys = Object.keys(object);
 	keys = keys.sort();
 	var newObject = {};
-	for (var i = 0; i < keys.length; i++) {
-		newObject[keys[i]] = sortJSON(object[keys[i]])
+	for (const key of keys) {
+		newObject[key] = sortJSON(object[key])
 	}
 	return newObject;
 }
@@ -76,7 +76,7 @@ app.all('*/reflect', function (req, res){
 
 app.head('/*', function (req, res) {
     // return policy headers on HEAD requests
-    for (key in req.headers) {
+    for (let key in req.headers) {
         if (/policy/.test(key)) {
             res.setHeader(key, req.headers[key]);
         }
@@ -144,8 +144,8 @@ app.all('/*', function (req, res) {
     if (!production && req.query.inlinejpeg) {
         let width = req.query.inlinejpeg.split('x')[0];
         let height = req.query.inlinejpeg.split('x')[1];
-        let jpegImage = createJPEG(width, height);
-        reply.inlinejpeg = jpegImage.data.toString('base64');
+        let jpeg = createJPEG(width, height);
+        reply.inlinejpeg = jpeg.data.toString('base64');
     }
 
     var reflect = '';
@@ -200,7 +200,8 @@ app.all('/*', function (req, res) {
         'path': req.path,
         'query': JSON.stringify(req.query),
         'root': req.root,
-        'url': req.url
+        'url': req.url,
+        'version': process.env.npm_package_name + '/' + process.env.npm_package_version
     };
     if (!production) {
         reply.info['delay'] = delay;
