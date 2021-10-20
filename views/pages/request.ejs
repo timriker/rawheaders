@@ -6,7 +6,7 @@
 		<meta name="author" content="Tim Riker" />
 		<meta name="robots" content="noindex,nofollow" />
 		<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.css"/>
-		<script type="text/javascript" src="//cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.js"></script>
+		<script src="//cdn.datatables.net/v/dt/jq-3.3.1/dt-1.10.20/b-1.6.1/b-colvis-1.6.1/b-html5-1.6.1/b-print-1.6.1/datatables.min.js"></script>
 		<style>
 			table.dataTable td {
 				word-break: break-all;
@@ -243,7 +243,7 @@
 		</div>
 		<h1>Request Data (<a href="?format=json">json</a>)</h1>
 		<table id="data" class="display compact">
-			<thead><tr><th>Type</th><th>Name</th><th>Value</th></tr></thead>
+			<thead><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Value</th></tr></thead>
 			<tbody>
 			<% Object.keys(reply.headers).forEach(function(prop) {
 				%><tr><td>header</td><td><%= prop %></td><td><%= reply.headers[prop] %></td></tr>
@@ -269,11 +269,11 @@
 				%><tr><td>headerdecoded</td><td><%= prop %></td><td><%= reply.headersdecoded[prop] %></td></tr>
 			<% });
 			%></tbody>
-			<tfoot><tr><th>Type</th><th>Name</th><th>Value</th></tr></tfoot>
+			<tfoot><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Value</th></tr></tfoot>
 		</table>
 		<% if (reply.inlinejpeg) { %>
 			<h3>Inline jpeg</h3>
-			<img src="data:image/jpeg;base64,<%= reply.inlinejpeg %>">
+			<img alt="random image" src="data:image/jpeg;base64,<%= reply.inlinejpeg %>">
 		<% } %>
 		<p class="center">This page displays web request details including headers and cookies sent to the application for testing. The wam-headers application is maintained by Tim Riker. The format of this page may change. Add <code>/wam-headers</code> to the end of a WAM application URL path to see this page.</p>
 	</body>
