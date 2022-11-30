@@ -5,4 +5,4 @@ Uses jquery and datatables to render searchable sortable lists of headers and ot
 
 to start:
 
-HOST=localhost npm run
+HOST=localhost npm start
