@@ -4,8 +4,6 @@ defaults: &defaults
   instances: 1
   memory: 64M
   disk_quota: 256M
-  services:
-  - splunk-service
 
 applications:
 
