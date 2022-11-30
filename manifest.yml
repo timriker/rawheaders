@@ -49,3 +49,4 @@ applications:
   instances: 2
   routes:
   - route: rawheader.churchofjesuschrist.org
+  - route: rawheaders.churchofjesuschrist.org
