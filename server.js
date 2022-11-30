@@ -37,20 +37,20 @@ function createJPEG(width, height) {
 }
 
 function sortJSON(object) {
-	if (object instanceof Array) {
-		for (var i = 0; i < object.length; i++) {
-			object[i] = sortJSON(object[i]);
-		}
-		return object;
-	} else if (typeof object != "object") return object;
+    if (object instanceof Array) {
+        for (var i = 0; i < object.length; i++) {
+            object[i] = sortJSON(object[i]);
+        }
+        return object;
+    } else if (typeof object != "object") return object;
 
-	var keys = Object.keys(object);
-	keys = keys.sort();
-	var newObject = {};
-	for (const key of keys) {
-		newObject[key] = sortJSON(object[key])
-	}
-	return newObject;
+    var keys = Object.keys(object);
+    keys = keys.sort();
+    var newObject = {};
+    for (const key of keys) {
+        newObject[key] = sortJSON(object[key])
+    }
+    return newObject;
 }
 
 // Middleware
@@ -68,10 +68,13 @@ app.use(function(req, res, next) {
     next();
 });
 
-// restrict access to /reflect and WAM can log you in and you bounce back to where you came from
+// restrict access to /reflect and can log you in and you bounce back to where you came from
 app.all('*/reflect', function (req, res){
     // referer is lost. it will contain the login/signin url and not the original requester
-    res.redirect(307, '..').end();
+    var redir = req.path.replace('/reflect','');
+    if (redir == '') redir = '/';
+    res.redirect(307, redir);
+    res.end();
 });
 
 app.head('/*', function (req, res) {
@@ -90,14 +93,14 @@ app.all('/*', function (req, res) {
     res.setHeader('Expires', 'Sat, 26 Jul 1997 05:00:00 GMT');
     res.setHeader('Cache-Control', 'no-cache, must-revalidate');
 
-    // save redirect and trigger WAM signin
+    // save redirect and trigger signin
     if (req.query.in) {
         res.cookie(cookiename, req.query.in, { path:'/', maxAge:3600000});
         res.redirect(307, signin);
         return;
     }
 
-    // save redirect and trigger WAM signout
+    // save redirect and trigger signout
     if (req.query.out) {
         res.cookie(cookiename, req.query.out, { path:'/', maxAge:3600000});
         res.redirect(307, signout);
