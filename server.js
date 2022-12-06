@@ -175,7 +175,7 @@ app.all('/*', function (req, res) {
     reply.otherheaders = {};
     for (key in req.headers) {
         if (/^policy/.test(key)) {
-            if (production && (/^policy-(ldsmrn|ldsbdate|workforceid)/i.test(key))) {
+            if (production && (/^policy-(bdate|cmisid|ldsmrn|ldsbdate|mrn|workforceid)/i.test(key))) {
                 reply.headers[key] = '*****';
             } else {
                 reply.headers[key] = req.headers[key];
