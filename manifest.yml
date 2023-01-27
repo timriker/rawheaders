@@ -7,42 +7,10 @@ defaults: &defaults
 
 applications:
 
-- name: header-dev
+- name: rawheader-dev
   <<: *defaults
   routes:
-  - route: header-dev.churchofjesuschrist.org
-  - route: header-dev.lds.org
-  - route: header-dev.ldschurch.org
   - route: rawheader-dev.churchofjesuschrist.org
-
-- name: header-test
-  <<: *defaults
-  routes:
-  - route: header-test.churchofjesuschrist.org
-  - route: header-test.lds.org
-  - route: header-test.ldschurch.org
-
-- name: header-int
-  <<: *defaults
-  instances: 2
-  routes:
-  - route: header-int.churchofjesuschrist.org
-  - route: header-int.lds.org
-  - route: header-int.ldschurch.org
-
-- name: header-stage
-  <<: *defaults
-  routes:
-  - route: header-stage.churchofjesuschrist.org
-  - route: header-stage.lds.org
-  - route: header-stage.ldschurch.org
-
-- name: header-uat
-  <<: *defaults
-  routes:
-  - route: header-uat.churchofjesuschrist.org
-  - route: header-uat.lds.org
-  - route: header-uat.ldschurch.org
 
 - name: rawheader
   <<: *defaults
