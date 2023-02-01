@@ -94,11 +94,11 @@
 					}
 					for (var key in vars) {
 						if (key == 'q') {
-							siteData.table.search(vars[key]);
+							siteData.table.search(vars[key],true,true);
 						}
 						if (/^c\([0-9]\)*$/.key) {
 							colnum = key.replace(/[^0-9]*/g,'');
-							siteData.table.col(colnum).search(vars[key]);
+							siteData.table.col(colnum).search(vars[key],true,true);
 						}
 					}
 					UpdateFilterInputs();
@@ -130,7 +130,7 @@
 						{
 							"text": 'Reset',
 							"action": function ( e, dt, node, config ) {
-								dt.search('').columns().search('');
+								dt.search('',true,true).columns().search('',true,true);
 								UpdateFilterInputs();
 							}
 						},
@@ -172,11 +172,14 @@
 					$( 'input', this.footer() ).on( 'keyup change clear input', function () {
 						if ( that.search() !== this.value ) {
 							that
-								.search( this.value )
+								.search( this.value, true, true )
 								.draw();
 						}
 					});
 				});
+				$('div#data_filter input').on( 'keyup change clear input', function () {
+					siteData.table.search( this.value , true, true).draw();
+				} );
 				// search non-selectable on mobile?
 				$('div.dt-buttons').attr('style', 'float: left !important');
 				LoadHash();
