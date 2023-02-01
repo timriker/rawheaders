@@ -94,11 +94,11 @@
 					}
 					for (var key in vars) {
 						if (key == 'q') {
-							siteData.table.search(vars[key],true,true);
+							siteData.table.search(decodeURIComponent(vars[key]),true,true);
 						}
 						if (/^c\([0-9]\)*$/.key) {
 							colnum = key.replace(/[^0-9]*/g,'');
-							siteData.table.col(colnum).search(vars[key],true,true);
+							siteData.table.col(colnum).search(decodeURIComponent(vars[key]),true,true);
 						}
 					}
 					UpdateFilterInputs();
@@ -108,12 +108,12 @@
 				var parameters = [];
 				var search = table.search();
 				if (search && search != '') {
-					parameters.push('q='+search);
+					parameters.push('q='+encodeURIComponent(search));
 				}
 				table.columns().every( function () {
 					var search = this.search();
 					if (search && search != '') {
-						parameters.push('c'+this.index()+'='+search);
+						parameters.push('c'+this.index()+'='+encodeURIComponent(search));
 					}
 				} );
 				window.location.hash = parameters.join("&");
