@@ -5,6 +5,9 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "env": {
+                "HOST": "0.0.0.0"
+            },
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
