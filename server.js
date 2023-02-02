@@ -68,7 +68,7 @@ app.use(function(req, res, next) {
     if (req.header('x-forwarded-port')) {
         port = req.header('x-forwarded-port');
     }
-    req.root = req.protocol + '://' + req.hostname + ':' + req.socket.localPort + req.path;
+    req.root = req.protocol + '://' + req.hostname + ':' + port + req.path;
     next();
 });
 
