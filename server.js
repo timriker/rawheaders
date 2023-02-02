@@ -64,7 +64,11 @@ app.use(function(req, res, next) {
         // F5 keeps losing the X-Forwarded-Proto setting
         //req.headers['x-forwarded-proto'] = 'https';
     //}
-    req.root = req.protocol + '://' + req.hostname + req.path;
+    let port = req.socket.localPort;
+    if (req.header('x-forwarded-port')) {
+        port = req.header('x-forwarded-port');
+    }
+    req.root = req.protocol + '://' + req.hostname + ':' + req.socket.localPort + req.path;
     next();
 });
 
@@ -167,6 +171,7 @@ app.all('/*', function (req, res) {
         'out': req.root + '?out=' + encodeURIComponent(req.root),
         'reflect': reflect,
         'relreflect': relreflect,
+        'return': req.root.replace('/rawheaders',''),
         'self': req.root,
         'signin': signin,
         'signout': signout
