@@ -11,6 +11,7 @@ applications:
   <<: *defaults
   routes:
   - route: rawheader-dev.churchofjesuschrist.org
+  - route: rawheader-test.churchofjesuschrist.org
 
 - name: rawheader
   <<: *defaults
