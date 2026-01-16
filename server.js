@@ -191,8 +191,21 @@ app.all('/*', function (req, res) {
     };
     reply.headersdecoded = {};
     Object.keys(reply.headers).forEach(function(prop) {
+        // RFC 2047
         if (reply.headers[prop].startsWith('=?')) {
             reply.headersdecoded[prop] = emailjsMimeCodec.mimeWordsDecode(reply.headers[prop]);
+        }
+    });
+    reply.otherheadersdecoded = {};
+    Object.keys(reply.otherheaders).forEach(function(prop) {
+        if (reply.otherheaders[prop].startsWith('Bearer ')) {
+            try {
+                // JWT decode
+                let decoded = {};
+                decoded.header = jwtDecode(reply.otherheaders[prop].substring(7), { header: true });
+                decoded.payload = jwtDecode(reply.otherheaders[prop].substring(7));
+                reply.otherheadersdecoded[prop] = decoded;
+            } catch(e) {}
         }
     });
     reply.info = {

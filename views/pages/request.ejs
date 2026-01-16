@@ -271,6 +271,9 @@
 			Object.keys(reply.headersdecoded).forEach(function(prop) {
 				%><tr><td>headerdecoded</td><td><%= prop %></td><td><%= reply.headersdecoded[prop] %></td></tr>
 			<% });
+			Object.keys(reply.otherheadersdecoded).forEach(function(prop) {
+				%><tr><td>otherheaderdecoded</td><td><%= prop %></td><td><pre><%= JSON.stringify(reply.otherheadersdecoded[prop], null, 2) %></pre></td></tr>
+			<% });
 			%></tbody>
 			<tfoot><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">Value</th></tr></tfoot>
 		</table>
